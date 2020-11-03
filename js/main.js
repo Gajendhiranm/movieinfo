@@ -2,37 +2,32 @@
 
 
 document.addEventListener('DOMContentLoaded', function onReady(){
-    
-  var a = 5;
-  fetchMovies('Inside');
-  var b = 10;
-  document.getElementById('search-form').addEventListener('submit', function onSearchSubmit(e){
-    e.preventDefault();
-  
-    const title = document.getElementById('search-text').value;
-    
-    fetchMovies(title);
 
-    console.log("Fetch end");
-  });
+
+  document.getElementById('search-form').addEventListener('submit', function onSearchSubmit(e){
+
+          e.preventDefault();
+          const title = document.getElementById("search-text").value ;
+            const API = "http://www.omdbapi.com/?apikey=e54db17c";
+            async function getData(){
+              let response = await fetch(API+`&s=${title}`);
+              let data = await response.json();
+              return data;
+            }
+        getData().then((data) =>{
+          loadMovies(data.Search)
+        });
+       
+          });
 
 });
 
-const fetchMovies = (title) => {
-  const API_BASE = "http://www.omdbapi.com/?apikey=e54db17c";
-  return fetch(API_BASE+`&s=${title}`)
-    .then((res)=>res.json())
-    .then(({Search})=> {
-      loadMovies(Search);
-      console.log("Fetch start");
-    })
-    .catch(err=>console.log(err));
-};
 
 function loadMovies(movies){
 
-  var output = '';
-  movies.forEach(function(movie){
+  var output = ''
+
+  movies.forEach((movie) => {
       output += `
       <div class="container">
         <div>
@@ -41,12 +36,11 @@ function loadMovies(movies){
           <a class="view-details" onclick="movieSelected('${movie.imdbID}')" target="_blank" >Movie Details</a>
         </div>
       </div>
-    `;
+    `
   })
   
   document.getElementById('movies').innerHTML = output;
 }
-
 function movieSelected(id){
   sessionStorage.setItem('movieId', id);
   window.location = 'movie.html';
